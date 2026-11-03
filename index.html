@@ -124,6 +124,7 @@ main{min-height:0;position:relative;overflow:hidden}
 .tool[aria-busy="true"]{opacity:.55;cursor:progress}
 .stage{position:relative;flex:1;min-height:0;border-radius:var(--r-3);overflow:hidden;background:var(--night-0);border:1px solid var(--line-1);user-select:none;-webkit-user-select:none}
 .stage>svg{position:absolute;inset:0;width:100%;height:100%}
+#stageCompare,#stageLight{touch-action:pan-y}
 .obs{min-height:34px;margin:0;padding:8px 4px 0;display:flex;gap:10px;align-items:flex-start;font:500 15px/1.5 var(--font-ui);color:var(--text-1)}
 .obs svg{margin-top:2px;color:var(--accent)}
 .shutter{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;animation:shut 320ms var(--ease-out)}
@@ -448,6 +449,7 @@ figure.mini{margin:0;position:sticky;top:8px;border:1px solid var(--line-1);bord
 /* ── 중간 폭 ── */
 @media (max-width:1240px){ .title,.title+.vdiv{display:none} }
 @media (max-width:1040px){ .qbody{grid-template-columns:1fr} figure.mini{position:static} .tab{padding:0 10px 0 9px} .tab .tl-long{display:none} .tab .tl-short{display:inline} }
+@media (min-width:761px) and (max-width:940px){ .top{gap:var(--sp-2);padding:0 var(--sp-3)} .top .vdiv{display:none} .util .help-btn,.util .report-btn,.util .hsep{display:none} .tab{padding:0 8px 0 7px;gap:5px} }
 
 /* ── 휴대폰·좁은 화면: 장면 → 조작판 순서로 흐르고, 탭은 아래 내비로 ── */
 @media (max-width:760px){
@@ -653,14 +655,14 @@ const STARS = [
   { id: 'primahyadum', ko: '황소자리 γ', des: '황소자리 γ', con: 'tau', ra: 4.32989, dec: 15.6276, V: 3.65, T: 4844, wiki: "Gamma Tauri" },
   { id: 'secundahyadum', ko: '황소자리 δ¹', des: '황소자리 δ¹', con: 'tau', ra: 4.38225, dec: 17.5425, V: 3.77, T: 4819, wiki: "Delta1 Tauri" },
   { id: 'ain', ko: '아인', des: '황소자리 ε', con: 'tau', ra: 4.47694, dec: 19.1804, V: 3.53, T: 4880, wiki: "Epsilon Tauri" },
-  { id: 'chamukuy', ko: '황소자리 θ²', des: '황소자리 θ²', con: 'tau', ra: 4.47625, dec: 15.9623, V: 3.4, T: 7800, wiki: "Theta2 Tauri" },
+  { id: 'chamukuy', ko: '황소자리 θ²', des: '황소자리 θ²', con: 'tau', ra: 4.47771, dec: 15.8709, V: 3.4, T: 7800, wiki: "Theta2 Tauri" },
   { id: 'lambdatau', ko: '황소자리 λ', des: '황소자리 λ', con: 'tau', ra: 4.01134, dec: 12.4903, V: 3.47, T: 18700, wiki: "Lambda Tauri" },
   { id: 'alcyone', ko: '알키오네', des: '황소자리 η · 플레이아데스', con: 'tau', ra: 3.79141, dec: 24.1051, V: 2.87, T: 12258, note: "플레이아데스 성단에서 가장 밝은 별", wiki: "Eta Tauri" },
   { id: 'castor', ko: '카스토르', des: '쌍둥이자리 α', con: 'gem', ra: 7.57663, dec: 31.8883, V: 1.58, T: 10286, note: "여러 별이 함께 보여요", wiki: "Castor (star)" },
   { id: 'pollux', ko: '폴룩스', des: '쌍둥이자리 β', con: 'gem', ra: 7.75526, dec: 28.0262, V: 1.14, T: 4810, wiki: "Pollux (star)" },
   { id: 'alhena', ko: '알헤나', des: '쌍둥이자리 γ', con: 'gem', ra: 6.62853, dec: 16.3993, V: 1.92, T: 9190, wiki: "Gamma Geminorum" },
   { id: 'wasat', ko: '와사트', des: '쌍둥이자리 δ', con: 'gem', ra: 7.33538, dec: 21.9823, V: 3.53, T: 6900, wiki: "Delta Geminorum" },
-  { id: 'mebsuta', ko: '메부타', des: '쌍둥이자리 ε', con: 'gem', ra: 6.7322, dec: 25.1311, V: 3.06, T: 4591, wiki: "Epsilon Geminorum" },
+  { id: 'mebsuta', ko: '메브수타', des: '쌍둥이자리 ε', con: 'gem', ra: 6.7322, dec: 25.1311, V: 3.06, T: 4591, wiki: "Epsilon Geminorum" },
   { id: 'tejat', ko: '테자트', des: '쌍둥이자리 μ', con: 'gem', ra: 6.38267, dec: 22.5136, V: 2.88, T: 3643, wiki: "Mu Geminorum" },
   { id: 'propus', ko: '프로푸스', des: '쌍둥이자리 η', con: 'gem', ra: 6.24796, dec: 22.5068, V: 3.3, T: 3502, wiki: "Eta Geminorum" },
   { id: 'mekbuda', ko: '메크부다', des: '쌍둥이자리 ζ', con: 'gem', ra: 7.06848, dec: 20.5703, V: 3.9, T: [5260, 5780], note: "밝기와 온도가 주기적으로 변해요", wiki: "Zeta Geminorum" },
@@ -677,7 +679,7 @@ const STARS = [
   { id: 'arcturus', ko: '아크투르스', des: '목동자리 α', con: 'boo', ra: 14.26103, dec: 19.1822, V: -0.05, T: 4286, wiki: "Arcturus" },
   { id: 'izar', ko: '이자르', des: '목동자리 ε', con: 'boo', ra: 14.74978, dec: 27.0742, V: 2.37, T: 4755, wiki: "Epsilon Bo\u00f6tis" },
   { id: 'muphrid', ko: '무프리드', des: '목동자리 η', con: 'boo', ra: 13.91141, dec: 18.3977, V: 2.68, T: 6161, wiki: "Eta Bo\u00f6tis" },
-  { id: 'seginus', ko: '세긴', des: '목동자리 γ', con: 'boo', ra: 14.53463, dec: 38.3082, V: 3.03, T: 7800, wiki: "Gamma Bo\u00f6tis" },
+  { id: 'seginus', ko: '세기누스', des: '목동자리 γ', con: 'boo', ra: 14.53463, dec: 38.3082, V: 3.03, T: 7800, wiki: "Gamma Bo\u00f6tis" },
   { id: 'nekkar', ko: '네카르', des: '목동자리 β', con: 'boo', ra: 15.03243, dec: 40.3906, V: 3.49, T: 4997, wiki: "Beta Bo\u00f6tis" },
   { id: 'deltaboo', ko: '목동자리 δ', des: '목동자리 δ', con: 'boo', ra: 15.25838, dec: 33.3148, V: 3.48, T: 4810, wiki: "Delta Bo\u00f6tis" },
   { id: 'rhoboo', ko: '목동자리 ρ', des: '목동자리 ρ', con: 'boo', ra: 14.5305, dec: 30.3714, V: 3.59, T: 4285, wiki: "Rho Bo\u00f6tis" },
@@ -1083,7 +1085,7 @@ class SkyScene extends PxScene {
   /* 화면 배치 */
   layout() {
     const { W, H } = this;
-    this.RH = this.o.ribbon ? clamp(Math.round(H * 0.16), 70, 86) : 0;
+    this.RH = this.o.ribbon ? clamp(Math.round(H * 0.16), 76, 86) : 0;
     this.sizeStars();
     this.layoutRibbon();
     this.aimCamera(false);
@@ -1292,7 +1294,7 @@ class OrderScene extends PxScene {
   layout() {
     if (!this.W) return;
     const { W, H } = this, N = Math.max(1, this.o.ids.length);
-    this.RH = clamp(Math.round(H * 0.16), 70, 86);
+    this.RH = clamp(Math.round(H * 0.16), 76, 86);
     this.pad = W < 520 ? 12 : 28;
     this.slotW = (W - this.pad * 2) / N;
     this.cy = Math.round((H - this.RH) * 0.42) + 8;
@@ -1546,7 +1548,7 @@ class GlowScene extends PxScene {
     const bandY = H - RZ + (W < 520 ? 52 : 58), bandH = W < 520 ? 16 : 18;
     this.band = { y: bandY, h: bandH };
     // 띠 (온도 범위 전체)
-    const rg = el('g', {}, null);
+    const rg = el('g', { 'pointer-events': 'none' }, null);
     this.gRib.replaceChildren(this.hitRect);
     this.gRib.appendChild(rg);
     this.rib = drawRibbon(rg, { x0: this.rx0, x1: this.rx1, y: bandY, h: bandH, T0: T_MIN, T1: T_MAX, fs, ticks: W < 520 ? [1000, 5000, 20000] : GL_TICKS });
@@ -1603,11 +1605,12 @@ class GlowScene extends PxScene {
     // 읽기
     const g = this.gRead; g.replaceChildren();
     const cat = catOfK(K), C = round100(toC(K)), rd = this.read, big = this.port ? 30 : (this.W < 900 ? 34 : 40);
-    const anc = rd.anchor;
+    const anc = rd.anchor, room = anc === 'start' ? this.W - 8 - rd.x : Math.min(rd.x, this.W - rd.x) * 2 - 16;   // 글자가 들어갈 폭
     el('text', { class: 'gl-label', x: rd.x, y: rd.y - big - 6, 'text-anchor': anc, 'font-size': fs + 1 }, g).textContent = '표면 온도';
     const t = el('text', { class: 'gl-big', x: rd.x, y: rd.y, 'text-anchor': anc, 'font-size': big }, g);
     t.textContent = `약 ${nf(C)}`;
-    el('tspan', { class: 'gl-unit', dx: 4, 'font-size': big * 0.5 }, t).textContent = '℃';
+    const unit = el('tspan', { class: 'gl-unit', dx: 4, 'font-size': big * 0.5 }, t); unit.textContent = '℃';
+    const tw = t.getComputedTextLength(); if (tw > room) { const k = room / tw; for (const e of [t, unit]) e.style.fontSize = `${(parseFloat(getComputedStyle(e).fontSize) * k).toFixed(1)}px`; }   // 좁은 화면에서 넘치면 줄인다
     const inStar = K >= RB_T0 - 150;
     const cy2 = rd.y + fs + 14;
     const chipT = inStar ? cat.ko : '달군 금속의 빛', cw = textW(chipT, fs + 2) + 30, chx = anc === 'middle' ? rd.x - cw / 2 : rd.x;
@@ -1616,7 +1619,10 @@ class GlowScene extends PxScene {
     el('text', { class: 'gl-cat', x: chx + 24, y: cy2 + 4, 'font-size': fs + 2 }, g).textContent = chipT;
     const near = [...STARS, SUN].filter(s => Math.abs(Math.log(Kof(s) / K)) < 0.05).sort((a, b) => a.V - b.V).slice(0, 3).map(s => s.ko);
     const nt = !inStar ? (K < 1100 ? '빛이 약해 어두운 곳에서만 보여요' : '별보다 온도가 낮아요') : near.length ? `이 온도의 별: ${near.join(', ')}` : '목록에 이 온도의 별은 없어요';
-    el('text', { class: 'gl-sub', x: rd.x, y: cy2 + fs + 16, 'text-anchor': anc, 'font-size': fs }, g).textContent = nt;
+    const sub = el('text', { class: 'gl-sub', x: rd.x, y: cy2 + fs + 16, 'text-anchor': anc, 'font-size': fs }, g); sub.textContent = nt;
+    // 좁은 화면에서 장면 밖으로 넘치면 글자를 12px까지 줄이고, 그래도 넘치면 덜 밝은 별 이름부터 뺀다
+    const fs0 = parseFloat(getComputedStyle(sub).fontSize);
+    for (let k = near.length; ; k--) { const tl = sub.getComputedTextLength(); if (tl <= room) break; const f = Math.max(12, fs0 * room / tl); sub.style.fontSize = `${f.toFixed(1)}px`; if (sub.getComputedTextLength() <= room + 1 || !inStar || k <= 1) break; sub.style.fontSize = ''; sub.textContent = `이 온도의 별: ${near.slice(0, k - 1).join(', ')}`; }
     this.renderSpec();
     // 손잡이
     const kn = this.gKnob; kn.replaceChildren();
